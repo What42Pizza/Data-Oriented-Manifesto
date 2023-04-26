@@ -8,7 +8,7 @@
 
 <br>
 
-But there's a MUCH worse problem with OOP, and it all comes down to control flow.
+## But there's a MUCH worse problem with OOP, and it all comes down to control flow.
 
 When you're making a program, control flow is the only thing that really matters. When a user clicks a button, they don't case how the factory factories work, they just care about the sequence of actions (control flow) that occurs as a result. Likewise, when you debug something, you have to look at the control flow of the code. Any way you look at it, creating, managing, and examining control flow is EXTREMELY important.
 
@@ -20,8 +20,30 @@ And it's not like they don't know about this or haven't tried to fix it, they ob
 
 <br>
 
-Let's look at the consequences of this:
+## Let's look at the consequences of this:
 
 - 1: Encapsulation completely fails. Control flow HAS TO be defined per-feature, and even though OOP *tries* to stop this, it can't be avoided. In theory you don't know the inner workings of an object you're interacting with, but in reality, you have to look at (and modify) the control flow of other objects in order to get the control flow of your current object to work
 
 - 2: Abstraction completely fails, basically for the same reason as encapsulation. In theory you can just use an object's functions and it'll just work, but thanks to the entangled control flow and global mutable state, functions in OOP codebases basically never "just work"
+
+<br>
+<br>
+<br>
+
+## So, is OOP always bad?
+
+Well, first we need a more rigorous definition of OOP. For the sake of this section, I'd say that using OOP means using methods attached to objects / structs as apposed to functions that have a vague mental connection to the data. From my experience, I'd say that there is a scenerio where an OOP mindset works
+
+Most of the fundamental problems stem from control flow between objects. I've have countless examples of how control flow between objects has lead to disaster, but I've never had any problems with control flow that only deals with a single object. One great example of this is ".length()" methods. But even with more advanced functions, if it only deals with a single object, having it be a method doesn't seem to cause any problems
+
+<br>
+<br>
+<br>
+
+## If OOP is so bad, why is it so widely used?
+
+I'd say the main reason why OOP is widely used is that it's conforting to know that your program is just a bunch of objects that can be independantly modified. Comfort may not seem like a big deal, but it really is. One big example of this is [2kliksphilip](https://www.youtube.com/@2kliksphilip), who refuses to switch away from Fusion 2.5 and learn a "real editor", simply because of how comforting the simple system is
+
+For the past few decades, the only options people have seen are simple OOP objects or haskel-like FP. Newer languages have thankfully shown people that FP doesn't have to be "magic" and "only for programming wizards", but I don't think procedural / FP will ever be able to match the comfort that OOP provides
+
+Another factor that keeps people in OOP is how programmers tend to be over-excited about new and shiny features, as can be cleary seen in early Rust game engines. Another category of "new and shiny features" is design patterns. People learn OOP, see some problems with it, learn exciting design patterns to fix them, end up with even more problems, learn even more deisgn patterns, and so on. Knowing how to "fix" OOP problems with your huge arsenal of design patterns probably makes you feel like a god, and when faced with the choice of switching to FP or learning more design patterns, you choose more design patterns
