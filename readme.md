@@ -20,7 +20,7 @@ And it's not like they don't know about this or haven't tried to fix it, they ob
 
 <br>
 
-## Let's look at the consequences of this:
+### Let's look at the consequences of this:
 
 - 1: Encapsulation completely fails. Control flow HAS TO be defined per-feature, and even though OOP *tries* to stop this, it can't be avoided. In theory you don't know the inner workings of an object you're interacting with, but in reality, you have to look at (and modify) the control flow of other objects in order to get the control flow of your current object to work
 
@@ -30,20 +30,20 @@ And it's not like they don't know about this or haven't tried to fix it, they ob
 <br>
 <br>
 
-## So, is OOP always bad?
+### So, is OOP always bad?
 
-Well, first we need a more rigorous definition of OOP. For the sake of this section, I'd say that using OOP means using methods attached to objects / structs as apposed to functions that have a vague mental connection to the data. From my experience, I'd say that there is a scenerio where an OOP mindset works
+Well, first we need a more rigorous definition of OOP. For the sake of this section, I'd say that using OOP / using an OOP mindset means using methods attached to objects / structs as apposed to functions that have a vague mental connection to the data. From my experience, I'd say that there is a scenerio where an OOP mindset works
 
-Most of the fundamental problems stem from control flow between objects. I've have countless examples of how control flow between objects has lead to disaster, but I've never had any problems with control flow that only deals with a single object. One great example of this is ".length()" methods. But even with more advanced functions, if it only deals with a single object, having it be a method doesn't seem to cause any problems
+Most of OOP's problems stem from control flow between objects. I have countless examples of how control flow between objects has lead to disaster, but I've never had any problems when the control flow only deals with a single object. One great example of this is ".length()" methods. But even with more advanced functions, if it only deals with a single object, having it be a method instead of a stand-alone function doesn't seem to cause any problems
 
 <br>
 <br>
 <br>
 
-## If OOP is so bad, why is it so widely used?
+### If OOP is so bad, why is it so widely used?
 
-I'd say the main reason why OOP is widely used is that it's conforting to know that your program is just a bunch of objects that can be independantly modified. Comfort may not seem like a big deal, but it really is. One big example of this is [2kliksphilip](https://www.youtube.com/@2kliksphilip), who refuses to switch away from Fusion 2.5 and learn a "real editor", simply because of how comforting the simple system is
+I'd say the main reason why OOP is widely used is that it's comforting to know that your program is just a bunch of objects that can be independantly modified. Comfort might not seem ver important, but it really is. One big example of this is [2kliksphilip](https://www.youtube.com/@2kliksphilip), who refuses to switch away from Fusion 2.5 and learn a "real editor" simply because of the comfort the simpler systems there
 
-For the past few decades, the only options people have seen are simple OOP objects or haskel-like FP. Newer languages have thankfully shown people that FP doesn't have to be "magic" and "only for programming wizards", but I don't think procedural / FP will ever be able to match the comfort that OOP provides
+For the past few decades, people have only seen 2 options for writing code: OOP objects or haskel-like FP. Newer languages have thankfully shown people that FP doesn't have to be "magic" and "only for programming wizards", but I don't think procedural / FP will ever be able to match the comfort that OOP provides. Whatever is most comforting is likely to stay the most popular, and if that's true, OOP will stay the most popular way to program
 
-Another factor that keeps people in OOP is how programmers tend to be over-excited about new and shiny features, as can be cleary seen in early Rust game engines. Another category of "new and shiny features" is design patterns. People learn OOP, see some problems with it, learn exciting design patterns to fix them, end up with even more problems, learn even more deisgn patterns, and so on. Knowing how to "fix" OOP problems with your huge arsenal of design patterns probably makes you feel like a god, and when faced with the choice of switching to FP or learning more design patterns, you choose more design patterns
+Another contributing factor that keeps people in OOP is how programmers tend to be over-excited about new and shiny features, as can be cleary seen in early Rust game engines. One type of "new and shiny features" is design patterns. People learn OOP, see some problems with it, learn exciting design patterns to fix them, end up with even more problems, learn even more deisgn patterns, and so on. Knowing how to "fix" OOP problems with your huge arsenal of design patterns probably makes you feel like a god, and when faced with the choice of switching to FP or learning more design patterns, you choose more design patterns
