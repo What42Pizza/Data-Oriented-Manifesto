@@ -1,0 +1,6 @@
+x: 0.3
+y: 0.3
+width: 0.4
+height: 0.15
+
+border color: F00
