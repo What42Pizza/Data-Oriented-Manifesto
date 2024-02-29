@@ -15,9 +15,9 @@ pub struct GuiRenderingData<'a> {
 pub struct GuiRenderFn;
 
 impl<'a> RenderFn<CustomGuiData, GuiRenderingData<'a>> for GuiRenderFn {
-	fn render_element(element: &GuiElement<CustomGuiData>, pos_i32: (i32, i32), size_u32: (u32, u32), rendering_data: &mut GuiRenderingData) -> Result<(), Box<dyn StdError>> {
-		let pos = pos_i32.to_f32();
-		let size = size_u32.to_f32();
+	fn render_element(element: &GuiElement<CustomGuiData>, element_area: RealArea, rendering_data: &mut GuiRenderingData) -> Result<(), Box<dyn StdError>> {
+		let (pos, size) = element_area.get_absolute();
+		let (pos, size) = (pos.to_f32(), size.to_f32());
 		
 		// background
 		if element.has_background {
@@ -38,7 +38,7 @@ impl<'a> RenderFn<CustomGuiData, GuiRenderingData<'a>> for GuiRenderFn {
 		
 		// text
 		if element.has_text {
-			let text_size = (element.text_size * element.latest_real_area.height) as f32 * element.latest_real_area.screen_size.1 as f32 * 0.7;
+			let text_size = (element.text_size * element_area.height) as f32 * element_area.screen_size.1 as f32 * 0.7;
 			let spacings = gui_utils::get_char_spacings(element, rendering_data.positioning_font, text_size);
 			let mut line_start_poss = Vec::with_capacity(element.text.len());
 			for (i, line) in element.text.iter().enumerate() {

@@ -1,12 +1,11 @@
 use crate::gui_mod::internal_prelude::*;
-use std::error::Error;
 
 
 
 pub type FieldWasApplied = bool;
 
 pub trait LoadingFns<CustomData, LoadingData> {
-	fn apply_custom_key(element: &mut GuiElement<CustomData>, key: &str, value: &str, line: usize, path: &Path, loading_data: &mut LoadingData) -> Result<FieldWasApplied, Box<dyn Error>>;
+	fn apply_custom_key(element: &mut GuiElement<CustomData>, key: &str, value: &str, line: usize, path: &Path, loading_data: &mut LoadingData) -> Result<FieldWasApplied, Error>;
 }
 
 
@@ -15,8 +14,8 @@ pub fn load_gui<CustomData, LoadingFnsImpl: LoadingFns<CustomData, LoadingData>,
 	folder_path: impl AsRef<Path>,
 	custom_data_fn: &mut impl FnMut() -> CustomData,
 	loading_data: &mut LoadingData,
-	errors: &mut Vec<GuiError>
-) -> Result<GuiElement<CustomData>, GuiError> {
+	errors: &mut Vec<Error>
+) -> Result<GuiElement<CustomData>> {
 	let (children_by_layer, children_by_name) = load_gui_elements_in_folder::<CustomData, LoadingFnsImpl, LoadingData>(folder_path, custom_data_fn, loading_data, errors)?;
 	let output = GuiElement::new("main", children_by_layer, children_by_name, custom_data_fn);
 	Ok(output)
@@ -29,8 +28,8 @@ pub fn load_gui_elements_in_folder<CustomData, LoadingFnsImpl: LoadingFns<Custom
 	folder_path: impl AsRef<Path>,
 	custom_data_fn: &mut impl FnMut() -> CustomData, 
 	loading_data: &mut LoadingData,
-	errors: &mut Vec<GuiError>
-) -> Result<(Vec<GuiElement<CustomData>>, HashMap<String, usize>), GuiError> {
+	errors: &mut Vec<Error>
+) -> Result<(Vec<GuiElement<CustomData>>, HashMap<String, usize>)> {
 	let folder_path = folder_path.as_ref();
 	let (mut by_layer_output, mut by_name_output) = (Vec::<GuiElement<CustomData>>::new(), HashMap::new());
 	
@@ -60,8 +59,8 @@ pub fn load_gui_element<CustomData, LoadingFnsImpl: LoadingFns<CustomData, Loadi
 	path: impl AsRef<Path>,
 	custom_data_fn: &mut impl FnMut() -> CustomData,
 	loading_data: &mut LoadingData,
-	errors: &mut Vec<GuiError>
-) -> Result<GuiElement<CustomData>, GuiError> {
+	errors: &mut Vec<Error>
+) -> Result<GuiElement<CustomData>> {
 	let path = path.as_ref();
 	let element_name = get_file_name(path)?.to_string();
 	let mut output = GuiElement::new(&element_name, vec!(), HashMap::new(), custom_data_fn);
@@ -76,7 +75,7 @@ pub fn load_gui_element<CustomData, LoadingFnsImpl: LoadingFns<CustomData, Loadi
 		if line.is_empty() {continue;}
 		
 		let Some(colon_index) = line.find(':') else {
-			errors.push(GuiError::MissingColon {line: i, path: path.to_path_buf()});
+			errors.push(GuiError::MissingColon {line: i, path: path.to_path_buf()}.into());
 			continue;
 		};
 		
@@ -103,13 +102,13 @@ pub fn load_gui_element<CustomData, LoadingFnsImpl: LoadingFns<CustomData, Loadi
 
 
 
-pub fn get_file_extension (path: &Path) -> Result<&str, GuiError> {
+pub fn get_file_extension (path: &Path) -> Result<&str> {
 	let ext = path.extension().ok_or_else(|| GuiError::InvalidFileName {path: path.to_path_buf()})?;
 	let ext = ext.to_str().ok_or_else(|| GuiError::InvalidFileName {path: path.to_path_buf()})?;
 	Ok(ext)
 }
 
-pub fn get_file_name (path: &Path) -> Result<&str, GuiError> {
+pub fn get_file_name (path: &Path) -> Result<&str> {
 	let name = path.file_stem().ok_or_else(|| GuiError::InvalidFileName {path: path.to_path_buf()})?;
 	let name = name.to_str().ok_or_else(|| GuiError::InvalidFileName {path: path.to_path_buf()})?;
 	Ok(name)
@@ -126,7 +125,7 @@ pub fn apply_field_to_element<CustomData, LoadingDataImpls: LoadingFns<CustomDat
 	line: usize,
 	path: &Path,
 	loading_data: &mut LoadingData
-) -> Result<(), GuiError> {
+) -> Result<()> {
 	'apply_vanilla_field: {
 		match field_name {
 			
@@ -167,7 +166,7 @@ pub fn apply_field_to_element<CustomData, LoadingDataImpls: LoadingFns<CustomDat
 		LoadingDataImpls::apply_custom_key(element, field_name, field_value, line, path, loading_data)
 		.map_err(|err| GuiError::ApplyFieldError {cause: err})?;
 	if !field_was_applied {
-		Err(GuiError::InvalidFieldName {field_name: field_name.to_string(), line, path: path.to_path_buf()})
+		Err(GuiError::InvalidFieldName {field_name: field_name.to_string(), line, path: path.to_path_buf()}.into())
 	} else {
 		Ok(())
 	}
@@ -175,19 +174,19 @@ pub fn apply_field_to_element<CustomData, LoadingDataImpls: LoadingFns<CustomDat
 
 
 
-pub fn parse_value_to_f64(value: &str, line: usize, path: &Path) -> Result<f64, GuiError> {
+pub fn parse_value_to_f64(value: &str, line: usize, path: &Path) -> Result<f64> {
 	value
 		.parse::<f64>()
 		.map_err(|cause|
-			GuiError::CannotCastToFloat {value: value.to_string(), line, path: path.to_path_buf(), cause}
+			GuiError::CannotCastToFloat {value: value.to_string(), line, path: path.to_path_buf(), cause}.into()
 		)
 }
 
-pub fn parse_value_to_bool(value: &str, line: usize, path: &Path) -> Result<bool, GuiError> {
+pub fn parse_value_to_bool(value: &str, line: usize, path: &Path) -> Result<bool> {
 	value
 		.parse::<bool>()
 		.map_err(|cause|
-			GuiError::CannotCastToBool {value: value.to_string(), line, path: path.to_path_buf(), cause}
+			GuiError::CannotCastToBool {value: value.to_string(), line, path: path.to_path_buf(), cause}.into()
 		)
 }
 
@@ -213,35 +212,35 @@ pub fn parse_value_to_string_vec(value: &str) -> Vec<String> {
 	output
 }
 
-pub fn parse_value_to_x_alignment(value: &str, line: usize, path: &Path) -> Result<XAlignment, GuiError> {
+pub fn parse_value_to_x_alignment(value: &str, line: usize, path: &Path) -> Result<XAlignment> {
 	match &*value.to_lowercase() {
 		"left" => Ok(XAlignment::Left),
 		"center" => Ok(XAlignment::Center),
 		"right" => Ok(XAlignment::Right),
-		_ => Err(GuiError::CannotCastToXAlignment {value: value.to_string(), line, path: path.to_path_buf()}),
+		_ => Err(GuiError::CannotCastToXAlignment {value: value.to_string(), line, path: path.to_path_buf()}.into()),
 	}
 }
 
-pub fn parse_value_to_y_alignment(value: &str, line: usize, path: &Path) -> Result<YAlignment, GuiError> {
+pub fn parse_value_to_y_alignment(value: &str, line: usize, path: &Path) -> Result<YAlignment> {
 	match &*value.to_lowercase() {
 		"bottom" => Ok(YAlignment::Bottom),
 		"center" => Ok(YAlignment::Center),
 		"top" => Ok(YAlignment::Top),
-		_ => Err(GuiError::CannotCastToYAlignment {value: value.to_string(), line, path: path.to_path_buf()}),
+		_ => Err(GuiError::CannotCastToYAlignment {value: value.to_string(), line, path: path.to_path_buf()}.into()),
 	}
 }
 
-pub fn parse_value_to_color(mut value: &str, line: usize, path: &Path) -> Result<Color, GuiError> {
+pub fn parse_value_to_color(mut value: &str, line: usize, path: &Path) -> Result<Color> {
 	let hex_to_u8 = |value| {
-		u8::from_str_radix(value, 16)
-			.map_err(|err| 
-				GuiError::CannotCastToColor {
-					value: value.to_string(),
-					line,
-					path: path.to_path_buf(),
-					cause: CannotCastToColorCause::ParseInt{cause: err},
-				}
-			)
+		match u8::from_str_radix(value, 16) {
+			StdResult::Ok (v) => Ok(v),
+			StdResult::Err (err) => Err(GuiError::CannotCastToColor {
+				value: value.to_string(),
+				line,
+				path: path.to_path_buf(),
+				cause: CannotCastToColorCause::ParseIntError (err),
+			}.into())
+		}
 	};
 	if value.starts_with("0x") {value = &value[2..];}
 	let (r, g, b, a);
@@ -276,7 +275,7 @@ pub fn parse_value_to_color(mut value: &str, line: usize, path: &Path) -> Result
 			b = hex_to_u8(&value[4..6])? as f32 / 255.;
 			a = hex_to_u8(&value[6..8])? as f32 / 255.;
 		}
-		_ => return Err(GuiError::CannotCastToColor {value: value.to_string(), line, path: path.to_path_buf(), cause: CannotCastToColorCause::InvalidLength{len: value.len()}}),
+		_ => return Err(GuiError::CannotCastToColor {value: value.to_string(), line, path: path.to_path_buf(), cause: CannotCastToColorCause::InvalidLength{len: value.len()}}.into()),
 	}
 	Ok(Color::new(r, g, b, a))
 }

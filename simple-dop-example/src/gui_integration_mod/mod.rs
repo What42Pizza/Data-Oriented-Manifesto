@@ -23,6 +23,7 @@ pub struct CustomGuiData {
 	pub image: Option<Texture>,
 	pub click_fn: Option<fn(&mut ProgramData) -> Result<()>>,
 	pub darken_while_pressed: bool,
+	pub latest_real_area: gui_mod::data::RealArea,
 }
 
 

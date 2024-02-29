@@ -1,5 +1,5 @@
 use crate::gui_mod::internal_prelude::*;
-use std::{fmt::Formatter, num::{ParseFloatError, ParseIntError}, str::ParseBoolError, error::Error};
+use std::{fmt::Formatter, num::{ParseFloatError, ParseIntError}, str::ParseBoolError};
 
 
 
@@ -18,7 +18,7 @@ pub enum GuiError {
 	
 	InvalidFileName {path: PathBuf},
 	
-	ApplyFieldError {cause: Box<dyn Error>},
+	ApplyFieldError {cause: Error},
 	IoError {cause: IoError},
 	
 }
@@ -39,7 +39,7 @@ impl Display for GuiError {
 			
 			Self::InvalidFileName {path} => write!(fmt, "\"Invalid File Name\": in {path:?}"),
 			
-			Self::ApplyFieldError { cause } => write!(fmt, "\"Apply Field Error\": '{cause:?}'"),
+			Self::ApplyFieldError {cause} => write!(fmt, "\"Apply Field Error\": '{cause:?}'"),
 			Self::IoError {cause} => write!(fmt, "\"IO Error\": '{cause:?}'"),
 			
 		}
@@ -58,14 +58,14 @@ impl From<std::io::Error> for GuiError {
 
 #[derive(Debug)]
 pub enum CannotCastToColorCause {
-	ParseInt {cause: ParseIntError},
+	ParseIntError (ParseIntError),
 	InvalidLength {len: usize},
 }
 
 impl Display for CannotCastToColorCause {
 	fn fmt(&self, fmt: &mut Formatter<'_>) -> std::result::Result<(), std::fmt::Error> {
 		match self {
-			Self::ParseInt {cause} => write!(fmt, "ParseIntError: {cause}"),
+			Self::ParseIntError (cause) => write!(fmt, "ParseIntError: {cause}"),
 			Self::InvalidLength {len} => write!(fmt, "Invalid Length: {len}"),
 		}
 	}

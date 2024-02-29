@@ -91,7 +91,8 @@ pub fn render(gfx: &mut Graphics, program_data: &mut ProgramData) -> Result<()> 
 		positioning_font: &program_data.positioning_font,
 	};
 	let mut errors = vec!();
-	render_gui_element::<CustomGuiData, GuiRenderingData, GuiRenderFn>(&program_data.gui, &mut render_data, &mut errors);
+	let initial_area = RealArea::new(screen_size.to_tuple());
+	render_gui_element::<CustomGuiData, GuiRenderingData, GuiRenderFn>(&program_data.gui, initial_area, &mut render_data, &mut errors);
 	if !errors.is_empty() {
 		println!("Errors ocurred while rendering:");
 		for error in errors {

@@ -1,5 +1,4 @@
 use crate::gui_mod::internal_prelude::*;
-use anyhow::*;
 
 
 
@@ -7,6 +6,7 @@ pub struct GuiElement<CustomData> {
 	
 	pub name: String,
 	pub render_priority: f64,
+	
 	pub visible: bool,
 	pub enabled: bool,
 	pub children_by_layer: Vec<GuiElement<CustomData>>,
@@ -18,7 +18,6 @@ pub struct GuiElement<CustomData> {
 	pub height: f64,
 	pub natural_x: f64,
 	pub natural_width: f64,
-	pub latest_real_area: RealArea,
 	
 	pub has_background: bool,
 	pub background_color: Color,
@@ -63,7 +62,6 @@ impl<T> GuiElement<T> {
 			height: 1.,
 			natural_x: 0.,
 			natural_width: 0.,
-			latest_real_area: RealArea {screen_size: (0, 0), x: 0., y: 0., width: 0., height: 0.},
 			
 			has_background: false,
 			background_color: Color::new(0.9, 0.9, 0.93, 1.),
@@ -219,7 +217,7 @@ impl Color {
 
 
 
-#[derive(Copy, Clone)]
+#[derive(Copy, Clone, Default)]
 pub struct RealArea {
 	pub screen_size: (u32, u32),
 	pub x: f64,

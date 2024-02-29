@@ -44,9 +44,8 @@ pub fn update(app: &mut App, program_data: &mut ProgramData) -> Result<()> {
 		}
 	}
 	
-	let initial_area = RealArea::new(program_data.last_screen_size.to_tuple());
 	let keyboard_data = gui_integration_mod::get_gui_keyboard_data(&app.keyboard);
-	update_gui_elements(&mut program_data.gui, initial_area, &keyboard_data);
+	update_gui_elements(&mut program_data.gui, &keyboard_data);
 	
 	
 	
