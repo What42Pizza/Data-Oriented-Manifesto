@@ -1,6 +1,8 @@
 use crate::prelude::*;
 use notan::draw::{CreateDraw, DrawImages, DrawShapes};
 
+use self::gui_mod::render::run_render_fns;
+
 
 
 pub fn render_wrapper(gfx: &mut Graphics, program_data: &mut ProgramData) {
@@ -90,12 +92,11 @@ pub fn render(gfx: &mut Graphics, program_data: &mut ProgramData) -> Result<()> 
 		rendering_font: program_data.rendering_font,
 		positioning_font: &program_data.positioning_font,
 	};
-	let mut errors = vec!();
-	let initial_area = RealArea::new(screen_size.to_tuple());
-	render_gui_element::<CustomGuiData, GuiRenderingData, GuiRenderFn>(&program_data.gui, initial_area, &mut render_data, &mut errors);
-	if !errors.is_empty() {
+	//render_gui_element::<CustomGuiData, GuiRenderingData, GuiRenderFn>(&program_data.gui, initial_area, &mut render_data, &mut errors);
+	let render_gui_result = run_render_fns::<CustomGuiData, GuiRenderingData, GuiRenderFn>(&program_data.gui, screen_size.to_tuple(), &mut render_data);
+	if let StdResult::Err(render_gui_errors) = render_gui_result {
 		println!("Errors ocurred while rendering:");
-		for error in errors {
+		for error in render_gui_errors {
 			println!("{error}");
 		}
 	}

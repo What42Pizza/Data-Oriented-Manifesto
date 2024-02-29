@@ -23,6 +23,8 @@ pub enum GuiError {
 	
 }
 
+impl std::error::Error for GuiError {}
+
 impl Display for GuiError {
 	fn fmt(&self, fmt: &mut Formatter<'_>) -> std::result::Result<(), std::fmt::Error> {
 		match self {
@@ -45,8 +47,6 @@ impl Display for GuiError {
 		}
 	}
 }
-
-impl std::error::Error for GuiError {}
 
 impl From<std::io::Error> for GuiError {
 	fn from(err: std::io::Error) -> Self {

@@ -2,6 +2,14 @@ use crate::prelude::*;
 
 
 
+pub(crate) struct Wrapper<T> (T);
+
+pub(crate) fn wrap<T>(item: T) -> Wrapper<T> {
+	Wrapper (item)
+}
+
+
+
 pub trait Vec2Fns {
 	fn from_tuple(from: (f32, f32)) -> Self;
 }

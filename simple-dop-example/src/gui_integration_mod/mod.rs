@@ -18,7 +18,7 @@ pub mod render;
 
 
 
-#[derive(Default)]
+#[derive(Default, Debug)]
 pub struct CustomGuiData {
 	pub image: Option<Texture>,
 	pub click_fn: Option<fn(&mut ProgramData) -> Result<()>>,

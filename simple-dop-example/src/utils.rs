@@ -34,3 +34,7 @@ pub fn load_texture(path: impl AsRef<Path>, gfx: &mut Graphics) -> Result<Textur
 		.build()
 		.map_err(Error::msg)
 }
+
+
+
+pub struct PackagedErrors (Vec<Error>);

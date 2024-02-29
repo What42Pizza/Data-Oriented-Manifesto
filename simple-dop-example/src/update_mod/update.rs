@@ -51,6 +51,7 @@ pub fn update(app: &mut App, program_data: &mut ProgramData) -> Result<()> {
 	
 	// main logic
 	do_main_update(program_data, dt)?;
+	update_gui_data(program_data)?;
 	
 	
 	
@@ -183,4 +184,37 @@ pub fn enemy_bullet_collision(bullet_datas: &mut BulletDataRefs, i: usize) -> Sh
 	}
 	
 	false
+}
+
+
+
+
+
+pub fn update_gui_data(program_data: &mut ProgramData) -> Result<()> {
+	match &mut program_data.mode {
+		
+		
+		
+		ProgramMode::MainMenu (main_menu_data) => {
+			let main_menu = program_data.gui.child_mut_or_message("main_menu", "could not update gui data")?;
+			
+			let in_menu_duration = main_menu_data.enter_time.elapsed();
+			let play_button = main_menu.child_mut_or_message("play_button", "could not update gui data")?;
+			play_button.has_border = in_menu_duration > program_settings::MAIN_MENU_WAIT_DURATION;
+			let play_button_progress = play_button.child_mut_or_message("play_button_progress", "could not update gui data")?;
+			play_button_progress.width = in_menu_duration.as_secs_f32() / program_settings::MAIN_MENU_WAIT_DURATION.as_secs_f32();
+			play_button_progress.width = play_button_progress.width.min(1.);
+			
+		}
+		
+		
+		
+		ProgramMode::Playing (playing_data) => {
+			
+		}
+		
+		
+		
+	}
+	Ok(())
 }

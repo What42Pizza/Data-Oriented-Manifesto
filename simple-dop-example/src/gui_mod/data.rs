@@ -2,36 +2,37 @@ use crate::gui_mod::internal_prelude::*;
 
 
 
+#[derive(Debug)]
 pub struct GuiElement<CustomData> {
 	
 	pub name: String,
-	pub render_priority: f64,
+	pub render_priority: f32,
 	
 	pub visible: bool,
 	pub enabled: bool,
 	pub children_by_layer: Vec<GuiElement<CustomData>>,
 	pub children_by_name: HashMap<String, usize>,
 	
-	pub x: f64,
-	pub y: f64,
-	pub width: f64,
-	pub height: f64,
-	pub natural_x: f64,
-	pub natural_width: f64,
+	pub x: f32,
+	pub y: f32,
+	pub width: f32,
+	pub height: f32,
+	pub natural_x: f32,
+	pub natural_width: f32,
 	
 	pub has_background: bool,
 	pub background_color: Color,
 	
 	pub has_border: bool,
 	pub border_color: Color,
-	pub border_width: f64,
+	pub border_width: f32,
 	
 	pub has_text: bool,
 	pub text_color: Color,
 	pub text: Vec<String>,
 	pub text_x_align: XAlignment,
 	pub text_y_align: YAlignment,
-	pub text_size: f64,
+	pub text_size: f32,
 	pub is_editing_text: bool,
 	pub can_edit_multiline: bool,
 	pub return_finishes_editing: bool,
@@ -181,20 +182,21 @@ impl<T> GuiElement<T> {
 
 
 
-#[derive(Copy, Clone)]
+#[derive(Debug, Copy, Clone)]
 pub enum XAlignment {
 	Left,
 	Center,
 	Right,
 }
 
-#[derive(Copy, Clone)]
+#[derive(Debug, Copy, Clone)]
 pub enum YAlignment {
 	Bottom,
 	Center,
 	Top,
 }
 
+#[derive(Debug, Copy, Clone)]
 pub struct Color {
 	pub r: f32,
 	pub g: f32,
@@ -217,13 +219,13 @@ impl Color {
 
 
 
-#[derive(Copy, Clone, Default)]
+#[derive(Debug, Copy, Clone, Default)]
 pub struct RealArea {
 	pub screen_size: (u32, u32),
-	pub x: f64,
-	pub y: f64,
-	pub width: f64,
-	pub height: f64,
+	pub x: f32,
+	pub y: f32,
+	pub width: f32,
+	pub height: f32,
 }
 
 impl RealArea {
@@ -238,7 +240,7 @@ impl RealArea {
 		}
 	}
 	
-	pub fn get_basic_sub_area(&self, x: f64, y: f64, width: f64, height: f64) -> Self {
+	pub fn get_basic_sub_area(&self, x: f32, y: f32, width: f32, height: f32) -> Self {
 		Self {
 			screen_size: self.screen_size,
 			x: self.x + x * self.width,
@@ -252,8 +254,8 @@ impl RealArea {
 		self.get_sub_area(element.x, element.y, element.width, element.height, element.natural_x, element.natural_width)
 	}
 	
-	pub fn get_sub_area(&self, x: f64, y: f64, width: f64, height: f64, natural_x: f64, natural_width: f64) -> Self {
-		let aspect_ratio = (self.screen_size.0 as f64 / self.screen_size.1 as f64) * (self.width / self.height);
+	pub fn get_sub_area(&self, x: f32, y: f32, width: f32, height: f32, natural_x: f32, natural_width: f32) -> Self {
+		let aspect_ratio = (self.screen_size.0 as f32 / self.screen_size.1 as f32) * (self.width / self.height);
 		Self {
 			screen_size: self.screen_size,
 			x: self.x + x * self.width + natural_x * self.width / aspect_ratio,
@@ -263,12 +265,12 @@ impl RealArea {
 		}
 	}
 	
-	pub fn get_point(&self, x: f64, y: f64, natural_x: f64) -> (i32, i32) {
-		let aspect_ratio = (self.screen_size.0 as f64 / self.screen_size.1 as f64) * (self.width / self.height);
+	pub fn get_point(&self, x: f32, y: f32, natural_x: f32) -> (i32, i32) {
+		let aspect_ratio = (self.screen_size.0 as f32 / self.screen_size.1 as f32) * (self.width / self.height);
 		let mut point_x = self.x + x * self.width + natural_x * self.width / aspect_ratio;
 		let mut point_y = self.y + y * self.height;
-		point_x *= self.screen_size.0 as f64;
-		point_y *= self.screen_size.1 as f64;
+		point_x *= self.screen_size.0 as f32;
+		point_y *= self.screen_size.1 as f32;
 		(point_x.round() as i32, point_y.round() as i32)
 	}
 	
@@ -281,10 +283,10 @@ impl RealArea {
 	}
 	
 	pub fn get_absolute(&self) -> ((i32, i32), (u32, u32)) {
-		let x = self.x * self.screen_size.0 as f64;
-		let y = self.y * self.screen_size.1 as f64;
-		let width  = self.width  * self.screen_size.0 as f64;
-		let height = self.height * self.screen_size.1 as f64;
+		let x = self.x * self.screen_size.0 as f32;
+		let y = self.y * self.screen_size.1 as f32;
+		let width  = self.width  * self.screen_size.0 as f32;
+		let height = self.height * self.screen_size.1 as f32;
 		let end_x = x + width;
 		let end_y = y + height;
 		let final_x = x.round() as i32;

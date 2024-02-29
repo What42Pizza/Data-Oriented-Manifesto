@@ -129,30 +129,30 @@ pub fn apply_field_to_element<CustomData, LoadingDataImpls: LoadingFns<CustomDat
 	'apply_vanilla_field: {
 		match field_name {
 			
-			"render priority" => element.render_priority = parse_value_to_f64(field_value, line, path)?,
+			"render priority" => element.render_priority = parse_value_to_f32(field_value, line, path)?,
 			"visible" => element.visible = parse_value_to_bool(field_value, line, path)?,
 			"enabled" => element.enabled = parse_value_to_bool(field_value, line, path)?,
 			
-			"x" => element.x = parse_value_to_f64(field_value, line, path)?,
-			"y" => element.y = parse_value_to_f64(field_value, line, path)?,
-			"width"  => element.width  = parse_value_to_f64(field_value, line, path)?,
-			"height" => element.height = parse_value_to_f64(field_value, line, path)?,
-			"natural x"     => element.natural_x     = parse_value_to_f64(field_value, line, path)?,
-			"natural width" => element.natural_width = parse_value_to_f64(field_value, line, path)?,
+			"x" => element.x = parse_value_to_f32(field_value, line, path)?,
+			"y" => element.y = parse_value_to_f32(field_value, line, path)?,
+			"width"  => element.width  = parse_value_to_f32(field_value, line, path)?,
+			"height" => element.height = parse_value_to_f32(field_value, line, path)?,
+			"natural x"     => element.natural_x     = parse_value_to_f32(field_value, line, path)?,
+			"natural width" => element.natural_width = parse_value_to_f32(field_value, line, path)?,
 			
 			"has background"   => element.has_background = parse_value_to_bool(field_value, line, path)?,
 			"background color" => element.background_color = parse_value_to_color(field_value, line, path)?,
 			
 			"has border"   => element.has_border   = parse_value_to_bool(field_value, line, path)?,
 			"border color" => element.border_color = parse_value_to_color(field_value, line, path)?,
-			"border width" => element.border_width = parse_value_to_f64(field_value, line, path)?,
+			"border width" => element.border_width = parse_value_to_f32(field_value, line, path)?,
 			
 			"has text"     => element.has_text     = parse_value_to_bool(field_value, line, path)?,
 			"text color"   => element.text_color   = parse_value_to_color(field_value, line, path)?,
 			"text"         => element.text         = parse_value_to_string_vec(field_value),
 			"text x align" => element.text_x_align = parse_value_to_x_alignment(field_value, line, path)?,
 			"text y align" => element.text_y_align = parse_value_to_y_alignment(field_value, line, path)?,
-			"text size"    => element.text_size    = parse_value_to_f64(field_value, line, path)?,
+			"text size"    => element.text_size    = parse_value_to_f32(field_value, line, path)?,
 			"is editing text"         => element.is_editing_text         = parse_value_to_bool(field_value, line, path)?,
 			"can edit multiline"      => element.can_edit_multiline      = parse_value_to_bool(field_value, line, path)?,
 			"return finishes editing" => element.return_finishes_editing = parse_value_to_bool(field_value, line, path)?,
@@ -174,9 +174,9 @@ pub fn apply_field_to_element<CustomData, LoadingDataImpls: LoadingFns<CustomDat
 
 
 
-pub fn parse_value_to_f64(value: &str, line: usize, path: &Path) -> Result<f64> {
+pub fn parse_value_to_f32(value: &str, line: usize, path: &Path) -> Result<f32> {
 	value
-		.parse::<f64>()
+		.parse::<f32>()
 		.map_err(|cause|
 			GuiError::CannotCastToFloat {value: value.to_string(), line, path: path.to_path_buf(), cause}.into()
 		)

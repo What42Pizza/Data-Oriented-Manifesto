@@ -29,6 +29,8 @@ pub mod program_settings {
 use prelude::*;
 use notan::draw::{DrawConfig, CreateFont};
 
+use crate::gui_mod::internal_prelude::RealArea;
+
 
 
 pub mod update_mod;
@@ -49,7 +51,7 @@ pub mod prelude {
 		utils::*,
 		program_settings,
 		gui_mod::{self, prelude::*},
-		custom_impls::*
+		custom_impls::*,
 	};
 	pub use crate::gui_integration_mod::prelude::*;
 	pub use std::{path::*, time::{Duration, Instant}};
@@ -67,7 +69,7 @@ pub mod prelude {
 
 
 
-#[notan_main]
+//#[notan_main]
 fn main() -> Result<(), String> {
 	let win_config = WindowConfig::new()
 		.set_resizable(true)
@@ -126,6 +128,12 @@ pub fn init(gfx: &mut Graphics) -> Result<ProgramData> {
 	//	}
 	//}
 	//print_gui(&gui);
+	
+	//let order_tree = gui_mod::render::get_element_ordering(&gui, (1280, 720));
+	//for (i, node) in order_tree.iter().enumerate() {
+	//	println!("{i}: {node:?}");
+	//}
+	//panic!();
 	
 	
 	

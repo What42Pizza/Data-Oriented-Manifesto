@@ -15,7 +15,7 @@ pub struct GuiRenderingData<'a> {
 pub struct GuiRenderFn;
 
 impl<'a> RenderFn<CustomGuiData, GuiRenderingData<'a>> for GuiRenderFn {
-	fn render_element(element: &GuiElement<CustomGuiData>, element_area: RealArea, rendering_data: &mut GuiRenderingData) -> Result<(), Box<dyn StdError>> {
+	fn render_element(element: &GuiElement<CustomGuiData>, element_area: RealArea, rendering_data: &mut GuiRenderingData) -> Result<()> {
 		let (pos, size) = element_area.get_absolute();
 		let (pos, size) = (pos.to_f32(), size.to_f32());
 		
@@ -33,7 +33,14 @@ impl<'a> RenderFn<CustomGuiData, GuiRenderingData<'a>> for GuiRenderFn {
 		
 		// border
 		if element.has_border {
-			todo!("WIP: draw border");
+			let width = element.border_width * size.1;
+			let half_width = width * 0.5;
+			let border_top_left = (pos.0 - half_width, pos.1 - half_width);
+			let border_bottom_right = (pos.0 + size.0 + half_width, pos.1 + size.1 + half_width);
+			rendering_data.draw.rect(border_top_left, (size.0 + width, width)).color(element.border_color.as_notan_color());
+			rendering_data.draw.rect(border_top_left, (width, size.1 + width)).color(element.border_color.as_notan_color());
+			rendering_data.draw.rect(border_bottom_right, (-(size.0 + width), -width)).color(element.border_color.as_notan_color());
+			rendering_data.draw.rect(border_bottom_right, (-width, -(size.1 + width))).color(element.border_color.as_notan_color());
 		}
 		
 		// text
