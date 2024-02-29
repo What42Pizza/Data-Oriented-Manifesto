@@ -30,7 +30,7 @@ pub fn process_typing<CustomData>(element: &mut GuiElement<CustomData>, keyboard
 	
 	
 	
-	for control in &keyboard_data.control_keys_pressed {
+	for control in &keyboard_data.control_keys_just_pressed {
 		match control {
 			
 			
@@ -86,7 +86,7 @@ pub fn process_typing<CustomData>(element: &mut GuiElement<CustomData>, keyboard
 			
 			
 			ControlKey::Return => {
-				if element.return_finishes_editing && !keyboard_data.shift_pressed {
+				if element.return_finishes_editing && !keyboard_data.shift_is_pressed {
 					element.is_editing_text = false;
 					continue;
 				}
@@ -156,11 +156,11 @@ pub fn process_typing<CustomData>(element: &mut GuiElement<CustomData>, keyboard
 	
 	
 	
-	if keyboard_data.typed_text.is_empty() {return;}
+	if keyboard_data.text_just_typed.is_empty() {return;}
 	
 	let current_line = &mut element.text[element.cursor_y];
-	current_line.insert_str(element.cursor_x, &keyboard_data.typed_text);
-	element.cursor_x += keyboard_data.typed_text.len();
+	current_line.insert_str(element.cursor_x, &keyboard_data.text_just_typed);
+	element.cursor_x += keyboard_data.text_just_typed.len();
 	element.cursor_target_x = element.cursor_x;
 	
 	

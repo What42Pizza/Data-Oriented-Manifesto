@@ -302,11 +302,11 @@ impl RealArea {
 
 #[derive(Debug)]
 pub struct GuiKeyboardData {
-	pub shift_pressed: bool,
-	pub control_pressed: bool,
-	pub alt_pressed: bool,
-	pub typed_text: String,
-	pub control_keys_pressed: Vec<ControlKey>,
+	pub shift_is_pressed: bool,
+	pub control_is_pressed: bool,
+	pub alt_is_pressed: bool,
+	pub text_just_typed: String,
+	pub control_keys_just_pressed: Vec<ControlKey>,
 }
 
 #[derive(Debug)]

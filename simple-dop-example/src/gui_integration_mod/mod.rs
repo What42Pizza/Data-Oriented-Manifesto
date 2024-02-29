@@ -113,10 +113,10 @@ pub fn get_gui_keyboard_data(keyboard: &Keyboard) -> GuiKeyboardData {
 	}
 	
 	GuiKeyboardData {
-		shift_pressed: shift,
-		control_pressed: ctrl,
-		alt_pressed: alt,
-		typed_text,
-		control_keys_pressed,
+		shift_is_pressed: shift,
+		control_is_pressed: ctrl,
+		alt_is_pressed: alt,
+		text_just_typed: typed_text,
+		control_keys_just_pressed: control_keys_pressed,
 	}
 }
