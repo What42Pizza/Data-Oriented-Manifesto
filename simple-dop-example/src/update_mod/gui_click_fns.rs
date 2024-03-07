@@ -17,14 +17,46 @@ pub fn add_click_fns(gui: &mut GuiElement<CustomGuiData>) -> Result<()> {
 		
 		
 		fn play_button(program_data: &mut ProgramData) -> Result<()> {
-			
-			program_data.mode = ProgramMode::Playing (PlayingData::new());
-			program_data.gui.child_mut_or_message("main_menu", "Could not disable 'main_menu'")?.enabled = false;
-			program_data.gui.child_mut_or_message("playing", "Could not enable 'playing'")?.enabled = true;
-			
-			Ok(())
+			let ProgramMode::MainMenu (main_menu_data) = &program_data.mode else {panic!("main_menu/play_button was clicked even though program_data.mode isn't ProgramMode::MainMenu");};
+			if main_menu_data.enter_time.elapsed() < program_settings::MAIN_MENU_WAIT_DURATION {return Ok(());}
+			update_utils::switch_from_main_menu_to_playing(program_data)
 		}
 		set_click_fn(main_menu.child_mut_or_message("play_button", MESSAGE)?, play_button);
+		
+		
+		
+		fn exit_button(program_data: &mut ProgramData) -> Result<()> {
+			program_data.exit = true;
+			Ok(())
+		}
+		set_click_fn(main_menu.child_mut_or_message("exit_button", MESSAGE)?, exit_button);
+		
+		
+		
+	}
+	
+	
+	
+	let playing = gui.child_mut_or_message("playing", MESSAGE)?; {
+		
+		
+		
+		let pause_menu = playing.child_mut_or_message("pause_menu", MESSAGE)?; {
+			
+			
+			
+			fn resume_button(program_data: &mut ProgramData) -> Result<()> {
+				let ProgramMode::Playing (playing_data) = &mut program_data.mode else {panic!("playing/pause_menu/resume_button was clicked even though program_data.mode isn't ProgramMode::Playing");};
+				if let PausedData::Paused {enter_time} = playing_data.paused_data {
+					playing_data.paused_data = PausedData::Unpaused {enter_time: PausedData::flip_fade_percent(enter_time)};
+				}
+				Ok(())
+			}
+			set_click_fn(pause_menu.child_mut_or_message("resume_button", MESSAGE)?, resume_button);
+			
+			
+			
+		}
 		
 		
 		

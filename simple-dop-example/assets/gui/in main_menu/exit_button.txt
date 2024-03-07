@@ -1,0 +1,14 @@
+x: 0.3
+y: 0.6
+width: 0.4
+height: 0.15
+
+has text: true
+text: Exit
+text size: 0.9
+
+has background: true
+background color: 622
+
+has border: true
+border color: F00

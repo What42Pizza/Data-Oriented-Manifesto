@@ -75,7 +75,7 @@ pub fn process_input_end(app: &mut App, program_data: &mut ProgramData, dt: f32)
 			let wait_duration_ended = main_menu_data.enter_time.elapsed() > program_settings::MAIN_MENU_WAIT_DURATION;
 			
 			if app.keyboard.was_pressed(KeyCode::Space) && wait_duration_ended {
-				program_data.mode = ProgramMode::Playing (PlayingData::new());
+				update_utils::switch_from_main_menu_to_playing(program_data)?;
 				return Ok(());
 			}
 			
@@ -87,11 +87,11 @@ pub fn process_input_end(app: &mut App, program_data: &mut ProgramData, dt: f32)
 			
 			if app.keyboard.was_pressed(KeyCode::Escape) {
 				match playing_data.paused_data {
-					PausedData::Paused {fade_in_percent} => {
-						playing_data.paused_data = PausedData::Unpaused {fade_out_percent: 1.0 - fade_in_percent};
+					PausedData::Paused {enter_time} => {
+						playing_data.paused_data = PausedData::Unpaused {enter_time: PausedData::flip_fade_percent(enter_time)};
 					}
-					PausedData::Unpaused {fade_out_percent} => {
-						playing_data.paused_data = PausedData::Paused {fade_in_percent: 1.0 - fade_out_percent};
+					PausedData::Unpaused {enter_time} => {
+						playing_data.paused_data = PausedData::Paused {enter_time: PausedData::flip_fade_percent(enter_time)};
 					}
 				}
 			}

@@ -1,7 +1,0 @@
-x: 0.35
-y: 0.2
-width: 3
-height: 6
-
-has background: true
-background color: 0006

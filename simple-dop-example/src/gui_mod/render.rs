@@ -1,5 +1,3 @@
-use std::default;
-
 use crate::gui_mod::internal_prelude::*;
 
 
@@ -17,7 +15,7 @@ pub fn run_render_fns<CustomData, RenderingData, RenderFnImpl: RenderFn<CustomDa
 ) -> std::result::Result<(), Vec<Error>> {
 	let mut errors = vec!();
 	
-	let order_tree = get_element_ordering(base_element, screen_size);
+	let order_tree = prepare_element_rendering(base_element, screen_size);
 	let mut branches_to_render = vec!(0);
 	loop {
 		
@@ -56,15 +54,16 @@ pub enum OrderingNode<'a, CustomData> {
 	},
 	Branch {
 		left_index: usize, left_max: f32,
-		right_index: usize, right_min: f32
+		right_index: usize, right_min: f32,
+		prev_equal_was_right: bool
 	},
 }
 
 impl<'a, CustomData> std::fmt::Debug for OrderingNode<'a, CustomData> {
 	fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
 		match self {
-			Self::Element {element, render_data} => write!(f, "element \"{}\"", element.name),
-			Self::Branch {left_index, left_max, right_index, right_min} => write!(f, "branch {{{left_index}, {left_max}, {right_index}, {right_min}}}"),
+			Self::Element {element, ..} => write!(f, "element \"{}\"", element.name),
+			Self::Branch {left_index, left_max, right_index, right_min, ..} => write!(f, "branch {{{left_index}, {left_max}, {right_index}, {right_min}}}"),
 		}
 	}
 }
@@ -84,7 +83,7 @@ impl ElementRenderData {
 
 
 
-pub fn get_element_ordering<'a, CustomData>(base_element: &'a GuiElement<CustomData>, screen_size: (u32, u32)) -> Vec<OrderingNode<'a, CustomData>> {
+pub fn prepare_element_rendering<CustomData>(base_element: &GuiElement<CustomData>, screen_size: (u32, u32)) -> Vec<OrderingNode<CustomData>> {
 	
 	let base_render_data = ElementRenderData {
 		real_area: RealArea::new(screen_size),
@@ -124,11 +123,12 @@ pub fn get_element_ordering<'a, CustomData>(base_element: &'a GuiElement<CustomD
 pub fn insert_into_order_tree<'a, CustomData>(element: &'a GuiElement<CustomData>, render_data: ElementRenderData, order_tree: &mut Vec<OrderingNode<'a, CustomData>>) {
 	let element_priority = element.render_priority;
 	let mut i = 0;
+	// TODO: traversed_nodes probably isn't needed now that OrderingNode::Branch has prev_equal_was_right
 	let mut traversed_nodes = vec!();
 	loop {
 		match &mut order_tree[i] {
 			
-			OrderingNode::Branch {left_index, left_max, right_index, right_min} => {
+			OrderingNode::Branch {left_index, left_max, right_index, right_min, prev_equal_was_right} => {
 				if element_priority <= *left_max {
 					traversed_nodes.push((i, false));
 					i = *left_index;
@@ -139,8 +139,15 @@ pub fn insert_into_order_tree<'a, CustomData>(element: &'a GuiElement<CustomData
 					i = *right_index;
 					continue;
 				}
-				traversed_nodes.push((i, false));
-				i = *left_index;
+				if *prev_equal_was_right {
+					*prev_equal_was_right = false;
+					traversed_nodes.push((i, false));
+					i = *left_index;
+				} else {
+					*prev_equal_was_right = true;
+					traversed_nodes.push((i, true));
+					i = *right_index;
+				}
 			}
 			
 			OrderingNode::Element {element: prev_element, render_data: prev_render_data} => {
@@ -153,7 +160,11 @@ pub fn insert_into_order_tree<'a, CustomData>(element: &'a GuiElement<CustomData
 				order_tree.push(OrderingNode::Element {element: left_element, render_data: left_render_data});
 				let right_index = order_tree.len();
 				order_tree.push(OrderingNode::Element {element: right_element, render_data: right_render_data});
-				order_tree[i] = OrderingNode::Branch {left_index, left_max: left_element.render_priority, right_index, right_min: right_element.render_priority};
+				order_tree[i] = OrderingNode::Branch {
+					left_index, left_max: left_element.render_priority,
+					right_index, right_min: right_element.render_priority,
+					prev_equal_was_right: false
+				};
 				break;
 			}
 			
@@ -169,26 +180,5 @@ pub fn insert_into_order_tree<'a, CustomData>(element: &'a GuiElement<CustomData
 		} else {
 			*curr_left_max = max;
 		}
-	}
-}
-
-
-
-pub fn render_gui_element<CustomData, RenderingData, RenderFnImpl: RenderFn<CustomData, RenderingData>>(
-	element: &GuiElement<CustomData>,
-	element_area: RealArea,
-	rendering_data: &mut RenderingData,
-	errors: &mut Vec<Error>,
-) {
-	if !element.enabled {return;}
-	if element.visible {
-		let result = RenderFnImpl::render_element(element, element_area, rendering_data);
-		if let Err(error) = result {
-			errors.push(error);
-		}
-	}
-	for child in &element.children_by_layer {
-		let child_area: RealArea = element_area.get_sub_area_for_element(child);
-		render_gui_element::<CustomData, RenderingData, RenderFnImpl>(child, child_area, rendering_data, errors);
 	}
 }

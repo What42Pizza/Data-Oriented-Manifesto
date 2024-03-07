@@ -1,5 +1,5 @@
 // Started:      24/02/27  (though started as a copy of another notan program)
-// Last updated: 24/02/27
+// Last updated: 24/03/01
 
 
 
@@ -13,6 +13,7 @@ pub mod program_settings {
 	use crate::prelude::*;
 	
 	pub const MAIN_MENU_WAIT_DURATION: Duration = Duration::from_secs(2);
+	pub const PLAYING_PAUSE_MENU_FADE_DURATION: Duration = Duration::from_micros(500);
 	
 	pub const PLAYER_SIZE: Vec2 = Vec2::new(0.05, 0.05);
 	pub const PLAYER_ACCELERATION: f32 = 1.7;
@@ -28,8 +29,6 @@ pub mod program_settings {
 
 use prelude::*;
 use notan::draw::{DrawConfig, CreateFont};
-
-use crate::gui_mod::internal_prelude::RealArea;
 
 
 

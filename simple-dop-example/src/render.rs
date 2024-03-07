@@ -92,7 +92,6 @@ pub fn render(gfx: &mut Graphics, program_data: &mut ProgramData) -> Result<()> 
 		rendering_font: program_data.rendering_font,
 		positioning_font: &program_data.positioning_font,
 	};
-	//render_gui_element::<CustomGuiData, GuiRenderingData, GuiRenderFn>(&program_data.gui, initial_area, &mut render_data, &mut errors);
 	let render_gui_result = run_render_fns::<CustomGuiData, GuiRenderingData, GuiRenderFn>(&program_data.gui, screen_size.to_tuple(), &mut render_data);
 	if let StdResult::Err(render_gui_errors) = render_gui_result {
 		println!("Errors ocurred while rendering:");

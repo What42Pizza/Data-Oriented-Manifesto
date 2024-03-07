@@ -1,0 +1,7 @@
+x: 0.4
+y: 0.15
+width: 0.2
+height: 0.15
+
+has text: true
+text: Simple DOP Example

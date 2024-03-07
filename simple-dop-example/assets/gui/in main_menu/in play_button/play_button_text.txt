@@ -1,5 +1,4 @@
 has text: true
 text: Play
-text size: 1
 
 render priority: 2

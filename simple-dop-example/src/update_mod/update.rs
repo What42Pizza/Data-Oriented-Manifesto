@@ -191,12 +191,13 @@ pub fn enemy_bullet_collision(bullet_datas: &mut BulletDataRefs, i: usize) -> Sh
 
 
 pub fn update_gui_data(program_data: &mut ProgramData) -> Result<()> {
+	const MESSAGE: &str = "could not update gui data";
 	match &mut program_data.mode {
 		
 		
 		
 		ProgramMode::MainMenu (main_menu_data) => {
-			let main_menu = program_data.gui.child_mut_or_message("main_menu", "could not update gui data")?;
+			let main_menu = program_data.gui.child_mut_or_message("main_menu", MESSAGE)?;
 			
 			let in_menu_duration = main_menu_data.enter_time.elapsed();
 			let play_button = main_menu.child_mut_or_message("play_button", "could not update gui data")?;
@@ -210,6 +211,19 @@ pub fn update_gui_data(program_data: &mut ProgramData) -> Result<()> {
 		
 		
 		ProgramMode::Playing (playing_data) => {
+			let playing = program_data.gui.child_mut_or_message("playing", MESSAGE)?;
+			
+			let pause_menu = playing.child_mut_or_message("pause_menu", MESSAGE)?;
+			match &playing_data.paused_data {
+				PausedData::Paused {enter_time} => {
+					pause_menu.enabled = true;
+					
+				}
+				PausedData::Unpaused {enter_time} => {
+					pause_menu.enabled = false;
+					
+				}
+			}
 			
 		}
 		

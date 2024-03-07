@@ -7,7 +7,7 @@ pub use self::super::{
 	update::update_gui_elements,
 	render::{
 		RenderFn,
-		render_gui_element,
+		run_render_fns,
 	},
 	data::{
 		GuiElement,

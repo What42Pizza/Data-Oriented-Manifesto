@@ -70,7 +70,7 @@ impl PlayingData {
 		Self {
 			
 			start_time: Instant::now(),
-			paused_data: PausedData::Unpaused {fade_out_percent: 1.0},
+			paused_data: PausedData::Unpaused {enter_time: Instant::now() - program_settings::PLAYING_PAUSE_MENU_FADE_DURATION * 2},
 			
 			player_pos: Vec2::new(0.5, 0.5),
 			player_vel: Vec2::new(0., 0.),
@@ -88,8 +88,16 @@ impl PlayingData {
 
 
 pub enum PausedData {
-	Paused {fade_in_percent: f32},
-	Unpaused {fade_out_percent: f32},
+	Paused {enter_time: Instant},
+	Unpaused {enter_time: Instant},
+}
+
+impl PausedData {
+	pub fn flip_fade_percent(old_enter_time: Instant) -> Instant {
+		let fade_percent = (old_enter_time.elapsed().as_secs_f32() / program_settings::PLAYING_PAUSE_MENU_FADE_DURATION.as_secs_f32()).min(1.);
+		let new_fade_percent = 1. - fade_percent;
+		Instant::now() - program_settings::PLAYING_PAUSE_MENU_FADE_DURATION.mul_f32(new_fade_percent)
+	}
 }
 
 

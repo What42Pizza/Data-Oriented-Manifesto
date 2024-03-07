@@ -1,6 +1,8 @@
 x: 0.3
-y: 0.3
+y: 0.4
 width: 0.4
 height: 0.15
+
+render priority: 3
 
 border color: F00
