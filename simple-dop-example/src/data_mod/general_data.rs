@@ -52,7 +52,7 @@ impl MainMenuData {
 pub struct PlayingData {
 	
 	pub start_time: Instant,
-	pub paused_data: PausedData,
+	pub pause_data: PausedData,
 	
 	pub player_pos: Vec2,
 	pub player_vel: Vec2,
@@ -70,7 +70,7 @@ impl PlayingData {
 		Self {
 			
 			start_time: Instant::now(),
-			paused_data: PausedData::Unpaused {enter_time: Instant::now() - program_settings::PLAYING_PAUSE_MENU_FADE_DURATION * 2},
+			pause_data: PausedData::new(),
 			
 			player_pos: Vec2::new(0.5, 0.5),
 			player_vel: Vec2::new(0., 0.),
@@ -87,16 +87,19 @@ impl PlayingData {
 
 
 
-pub enum PausedData {
-	Paused {enter_time: Instant},
-	Unpaused {enter_time: Instant},
+pub struct PausedData {
+	pub is_paused: bool,
+	pub curr_menu_transparency: f32,
+	pub needs_gui_update: bool,
 }
 
 impl PausedData {
-	pub fn flip_fade_percent(old_enter_time: Instant) -> Instant {
-		let fade_percent = (old_enter_time.elapsed().as_secs_f32() / program_settings::PLAYING_PAUSE_MENU_FADE_DURATION.as_secs_f32()).min(1.);
-		let new_fade_percent = 1. - fade_percent;
-		Instant::now() - program_settings::PLAYING_PAUSE_MENU_FADE_DURATION.mul_f32(new_fade_percent)
+	pub fn new() -> Self {
+		Self {
+			is_paused: false,
+			curr_menu_transparency: 0.,
+			needs_gui_update: false,
+		}
 	}
 }
 

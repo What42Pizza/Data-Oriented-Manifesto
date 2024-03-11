@@ -8,7 +8,7 @@ text: Exit
 text size: 0.9
 
 has background: true
-background color: 622
+background color: 744
 
 has border: true
-border color: F00
+border color: A00

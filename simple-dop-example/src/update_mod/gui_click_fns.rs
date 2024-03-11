@@ -41,18 +41,16 @@ pub fn add_click_fns(gui: &mut GuiElement<CustomGuiData>) -> Result<()> {
 		
 		
 		
-		let pause_menu = playing.child_mut_or_message("pause_menu", MESSAGE)?; {
+		let main_pause_menu = playing.child_mut_or_message("main_pause_menu", MESSAGE)?; {
 			
 			
 			
 			fn resume_button(program_data: &mut ProgramData) -> Result<()> {
 				let ProgramMode::Playing (playing_data) = &mut program_data.mode else {panic!("playing/pause_menu/resume_button was clicked even though program_data.mode isn't ProgramMode::Playing");};
-				if let PausedData::Paused {enter_time} = playing_data.paused_data {
-					playing_data.paused_data = PausedData::Unpaused {enter_time: PausedData::flip_fade_percent(enter_time)};
-				}
+				playing_data.pause_data.is_paused = false;
 				Ok(())
 			}
-			set_click_fn(pause_menu.child_mut_or_message("resume_button", MESSAGE)?, resume_button);
+			set_click_fn(main_pause_menu.child_mut_or_message("resume_button", MESSAGE)?, resume_button);
 			
 			
 			

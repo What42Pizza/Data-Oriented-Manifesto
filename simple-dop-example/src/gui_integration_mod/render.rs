@@ -14,8 +14,8 @@ pub struct GuiRenderingData<'a> {
 
 pub struct GuiRenderFn;
 
-impl<'a> RenderFn<CustomGuiData, GuiRenderingData<'a>> for GuiRenderFn {
-	fn render_element(element: &GuiElement<CustomGuiData>, element_area: RealArea, rendering_data: &mut GuiRenderingData) -> Result<()> {
+impl<'a> gui::render::RenderFn<CustomGuiData, GuiRenderingData<'a>> for GuiRenderFn {
+	fn render_element(element: &GuiElement<CustomGuiData>, element_area: gui::data::RealArea, rendering_data: &mut GuiRenderingData) -> Result<()> {
 		let (pos, size) = element_area.get_absolute();
 		let (pos, size) = (pos.to_f32(), size.to_f32());
 		
@@ -46,11 +46,11 @@ impl<'a> RenderFn<CustomGuiData, GuiRenderingData<'a>> for GuiRenderFn {
 		// text
 		if element.has_text {
 			let text_size = element.text_size * element_area.height * element_area.screen_size.1 as f32 * 0.7;
-			let spacings = gui_utils::get_char_spacings(element, rendering_data.positioning_font, text_size);
+			let spacings = gui::utils::get_char_spacings(element, rendering_data.positioning_font, text_size);
 			let mut line_start_poss = Vec::with_capacity(element.text.len());
 			for (i, line) in element.text.iter().enumerate() {
 				let line_width = *spacings[i].last().unwrap_or(&0.);
-				let line_start_pos = gui_utils::get_line_start_pos(element, pos, size, text_size, i, line_width);
+				let line_start_pos = gui::utils::get_line_start_pos(element, pos, size, text_size, i, line_width);
 				line_start_poss.push(line_start_pos);
 				if line.is_empty() {continue;}
 				rendering_data.draw.text(&rendering_data.rendering_font, line)

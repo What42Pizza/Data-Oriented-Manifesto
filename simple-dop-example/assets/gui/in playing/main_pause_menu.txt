@@ -4,4 +4,5 @@ width: 0.3
 height: 0.6
 
 has background: true
-background color: 0006
+background color: 0000
+default background alpha: 6

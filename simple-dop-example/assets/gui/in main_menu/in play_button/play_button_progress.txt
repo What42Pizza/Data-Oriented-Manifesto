@@ -1,4 +1,4 @@
 has background: true
-background color: 622
+background color: 744
 
 render priority: 1

@@ -6,10 +6,6 @@ use crate::gui_mod::internal_prelude::*;
 
 pub fn update_gui_elements<CustomData>(element: &mut GuiElement<CustomData>, keyboard_data: &GuiKeyboardData) {
 	
-	// update real area
-	//let current_area: RealArea = parent_area.get_sub_area_for_element(element);
-	//element.latest_real_area = current_area;
-	
 	// update text
 	if element.has_text && element.is_editing_text {
 		process_typing(element, keyboard_data);

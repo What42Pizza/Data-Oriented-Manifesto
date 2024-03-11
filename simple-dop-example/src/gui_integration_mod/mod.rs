@@ -1,9 +1,9 @@
 use crate::prelude::*;
-use self::gui_mod::internal_prelude::GuiKeyboardData;
 
 
 
 pub mod prelude {
+	pub use crate::gui_mod::data::GuiElement;
 	pub use super::{
 		CustomGuiData,
 		init::init_gui,
@@ -23,12 +23,13 @@ pub struct CustomGuiData {
 	pub image: Option<Texture>,
 	pub click_fn: Option<fn(&mut ProgramData) -> Result<()>>,
 	pub darken_while_pressed: bool,
-	pub latest_real_area: gui_mod::data::RealArea,
+	pub default_background_alpha: Option<f32>,
+	pub default_text_alpha: Option<f32>,
 }
 
 
 
-pub fn get_gui_keyboard_data(keyboard: &Keyboard) -> GuiKeyboardData {
+pub fn get_gui_keyboard_data(keyboard: &Keyboard) -> gui::data::GuiKeyboardData {
 	let shift = keyboard.shift();
 	let ctrl = keyboard.ctrl();
 	let alt = keyboard.alt();
@@ -36,6 +37,7 @@ pub fn get_gui_keyboard_data(keyboard: &Keyboard) -> GuiKeyboardData {
 	let mut typed_text = String::new();
 	let mut control_keys_pressed = vec!();
 	for key in &keyboard.pressed {
+		use gui::data::ControlKey;
 		match key {
 			
 			KeyCode::Up => control_keys_pressed.push(ControlKey::Up),
@@ -112,7 +114,7 @@ pub fn get_gui_keyboard_data(keyboard: &Keyboard) -> GuiKeyboardData {
 		}
 	}
 	
-	GuiKeyboardData {
+	gui::data::GuiKeyboardData {
 		shift_is_pressed: shift,
 		control_is_pressed: ctrl,
 		alt_is_pressed: alt,

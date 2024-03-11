@@ -5,4 +5,4 @@ height: 0.15
 
 render priority: 3
 
-border color: F00
+border color: A00

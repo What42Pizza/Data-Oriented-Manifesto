@@ -28,11 +28,10 @@ pub fn update(app: &mut App, program_data: &mut ProgramData) -> Result<()> {
 	
 	
 	// gui
-	
 	let mouse_pos = app.mouse.position().to_i32();
 	let last_screen_size = program_data.last_screen_size;
 	if app.mouse.left_was_pressed() {
-		let hovered_elements = gui_mod::gui_utils::get_hovered_elements(&program_data.gui, mouse_pos, last_screen_size.to_tuple());
+		let hovered_elements = gui::utils::get_hovered_elements(&program_data.gui, mouse_pos, last_screen_size.to_tuple());
 		for element in hovered_elements {
 			if let Some(click_fn) = element.custom_data.click_fn {
 				let result = click_fn(program_data);
@@ -45,13 +44,13 @@ pub fn update(app: &mut App, program_data: &mut ProgramData) -> Result<()> {
 	}
 	
 	let keyboard_data = gui_integration_mod::get_gui_keyboard_data(&app.keyboard);
-	update_gui_elements(&mut program_data.gui, &keyboard_data);
+	gui::update::update_gui_elements(&mut program_data.gui, &keyboard_data);
 	
 	
 	
 	// main logic
 	do_main_update(program_data, dt)?;
-	update_gui_data(program_data)?;
+	update_gui::update_gui_data(program_data)?;
 	
 	
 	
@@ -84,10 +83,14 @@ pub fn do_main_update(program_data: &mut ProgramData, dt: f32) -> Result<()> {
 		
 		ProgramMode::Playing (playing_data) => {
 			
+			
+			// update player
 			playing_data.player_pos += playing_data.player_vel * dt;
 			playing_data.player_vel *= program_settings::PLAYER_DRAG_COEF.powf(dt);
 			playing_data.player_pos = playing_data.player_pos.clamp(program_settings::PLAYER_SIZE * 0.5, 1.0 - program_settings::PLAYER_SIZE * 0.5);
 			
+			
+			// update bullets
 			let mut bullet_datas = BulletDataRefs {
 				bullets: &mut playing_data.player_bullets,
 				player_pos: &playing_data.player_pos,
@@ -98,6 +101,20 @@ pub fn do_main_update(program_data: &mut ProgramData, dt: f32) -> Result<()> {
 			
 			bullet_datas.bullets = &mut playing_data.enemy_bullets;
 			update_bullets(&mut bullet_datas, enemy_bullet_collision);
+			
+			
+			// update pause menu
+			let pause_data = &mut playing_data.pause_data;
+			let target_transparency = pause_data.is_paused as u8 as f32;
+			pause_data.needs_gui_update = false;
+			if target_transparency != pause_data.curr_menu_transparency {
+				pause_data.needs_gui_update = true;
+				let direction = (target_transparency - pause_data.curr_menu_transparency);
+				let step = dt / program_settings::PLAYING_PAUSE_MENU_FADE_DURATION.as_secs_f32();
+				pause_data.curr_menu_transparency += direction.clamp(-step, step);
+				pause_data.curr_menu_transparency = pause_data.curr_menu_transparency.clamp(0., 1.);
+			}
+			
 			
 		}
 		
@@ -184,51 +201,4 @@ pub fn enemy_bullet_collision(bullet_datas: &mut BulletDataRefs, i: usize) -> Sh
 	}
 	
 	false
-}
-
-
-
-
-
-pub fn update_gui_data(program_data: &mut ProgramData) -> Result<()> {
-	const MESSAGE: &str = "could not update gui data";
-	match &mut program_data.mode {
-		
-		
-		
-		ProgramMode::MainMenu (main_menu_data) => {
-			let main_menu = program_data.gui.child_mut_or_message("main_menu", MESSAGE)?;
-			
-			let in_menu_duration = main_menu_data.enter_time.elapsed();
-			let play_button = main_menu.child_mut_or_message("play_button", "could not update gui data")?;
-			play_button.has_border = in_menu_duration > program_settings::MAIN_MENU_WAIT_DURATION;
-			let play_button_progress = play_button.child_mut_or_message("play_button_progress", "could not update gui data")?;
-			play_button_progress.width = in_menu_duration.as_secs_f32() / program_settings::MAIN_MENU_WAIT_DURATION.as_secs_f32();
-			play_button_progress.width = play_button_progress.width.min(1.);
-			
-		}
-		
-		
-		
-		ProgramMode::Playing (playing_data) => {
-			let playing = program_data.gui.child_mut_or_message("playing", MESSAGE)?;
-			
-			let pause_menu = playing.child_mut_or_message("pause_menu", MESSAGE)?;
-			match &playing_data.paused_data {
-				PausedData::Paused {enter_time} => {
-					pause_menu.enabled = true;
-					
-				}
-				PausedData::Unpaused {enter_time} => {
-					pause_menu.enabled = false;
-					
-				}
-			}
-			
-		}
-		
-		
-		
-	}
-	Ok(())
 }

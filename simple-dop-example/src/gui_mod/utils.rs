@@ -25,6 +25,22 @@ pub fn add_hovered_elements<'a, CustomData>(element: &'a GuiElement<CustomData>,
 
 
 
+pub fn apply_to_all_children<CustomData>(element: &mut GuiElement<CustomData>, update_fn: impl Fn(&mut GuiElement<CustomData>) -> Result<()>) -> Result<()> {
+	let mut elements_to_update = vec!(element);
+	loop {
+		let Some(curr_element) = elements_to_update.pop() else {break};
+		update_fn(curr_element)?;
+		for child in &mut curr_element.children_by_layer {
+			elements_to_update.push(child);
+		}
+	}
+	Ok(())
+}
+
+
+
+
+
 pub fn get_char_spacings<CustomData>(element: &GuiElement<CustomData>, font: &FontVec, text_size: f32) -> Vec<Vec<f32>> {
 	let font = font.as_scaled(PxScale::from(text_size));
 	let mut output = Vec::with_capacity(element.text.len());

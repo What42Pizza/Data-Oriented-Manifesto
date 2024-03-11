@@ -86,14 +86,8 @@ pub fn process_input_end(app: &mut App, program_data: &mut ProgramData, dt: f32)
 		ProgramMode::Playing (playing_data) => {
 			
 			if app.keyboard.was_pressed(KeyCode::Escape) {
-				match playing_data.paused_data {
-					PausedData::Paused {enter_time} => {
-						playing_data.paused_data = PausedData::Unpaused {enter_time: PausedData::flip_fade_percent(enter_time)};
-					}
-					PausedData::Unpaused {enter_time} => {
-						playing_data.paused_data = PausedData::Paused {enter_time: PausedData::flip_fade_percent(enter_time)};
-					}
-				}
+				let pause_data = &mut playing_data.pause_data;
+				pause_data.is_paused = !pause_data.is_paused;
 			}
 			
 			if app.mouse.left_was_pressed() {

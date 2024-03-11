@@ -4,8 +4,11 @@ width: 0.8
 height: 0.1
 
 has background: true
-background color: f008
+background color: f000
+default background alpha: 8
 
 has text: true
 text: Resume
 text size: 0.9
+text color: 0000
+default text alpha: f
