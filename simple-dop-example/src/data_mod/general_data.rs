@@ -1,3 +1,5 @@
+use std::collections::HashMap;
+
 use crate::prelude::*;
 use notan::random::rand::thread_rng;
 
@@ -7,13 +9,14 @@ use notan::random::rand::thread_rng;
 pub struct ProgramData {
 	pub exit: bool,
 	
-	pub gui: GuiElement<CustomGuiData>,
 	pub textures: Textures,
 	pub rendering_font: RenderingFont,
 	pub positioning_font: PositioningFont,
 	pub last_screen_size: UVec2,
 	
 	pub mode: ProgramMode,
+	pub main_menu_data: MainMenuData,
+	pub playing_data: PlayingData,
 	
 }
 
@@ -29,21 +32,26 @@ pub struct Textures {
 
 
 pub enum ProgramMode {
-	MainMenu (MainMenuData),
-	Playing (PlayingData),
+	MainMenu,
+	Playing,
 }
 
 
 
 pub struct MainMenuData {
+	pub gui: GuiElement<CustomGuiData>,
 	pub enter_time: Instant,
 }
 
 impl MainMenuData {
-	pub fn new() -> Self {
+	pub fn empty() -> Self {
 		Self {
+			gui: GuiElement::new("", vec!(), HashMap::new(), &mut CustomGuiData::default),
 			enter_time: Instant::now(),
 		}
+	}
+	pub fn reset(&mut self) {
+		self.enter_time = Instant::now();
 	}
 }
 
@@ -51,6 +59,7 @@ impl MainMenuData {
 
 pub struct PlayingData {
 	
+	pub gui: GuiElement<CustomGuiData>,
 	pub start_time: Instant,
 	pub pause_data: PausedData,
 	
@@ -66,15 +75,16 @@ pub struct PlayingData {
 }
 
 impl PlayingData {
-	pub fn new() -> Self {
+	pub fn empty() -> Self {
 		Self {
 			
+			gui: GuiElement::new("", vec!(), HashMap::new(), &mut CustomGuiData::default),
 			start_time: Instant::now(),
 			pause_data: PausedData::new(),
 			
-			player_pos: Vec2::new(0.5, 0.5),
-			player_vel: Vec2::new(0., 0.),
-			player_health: 1.,
+			player_pos: Vec2::default(),
+			player_vel: Vec2::default(),
+			player_health: 0.,
 			score: 0,
 			
 			enemies: vec!(),
@@ -82,6 +92,21 @@ impl PlayingData {
 			enemy_bullets: vec!(),
 			
 		}
+	}
+	pub fn reset(&mut self) {
+		
+		self.start_time = Instant::now();
+		self.pause_data = PausedData::new();
+		
+		self.player_pos = Vec2::new(0.5, 0.5);
+		self.player_vel = Vec2::new(0., 0.);
+		self.player_health = 1.;
+		self.score = 0;
+		
+		self.enemies = vec!();
+		self.player_bullets = vec!();
+		self.enemy_bullets = vec!();
+		
 	}
 }
 

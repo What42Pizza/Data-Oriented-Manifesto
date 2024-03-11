@@ -6,7 +6,7 @@ pub mod prelude {
 	pub use crate::gui_mod::data::GuiElement;
 	pub use super::{
 		CustomGuiData,
-		init::init_gui,
+		init::init_all_guis,
 		render::{GuiRenderingData, GuiRenderFn},
 	};
 }

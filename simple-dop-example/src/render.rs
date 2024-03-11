@@ -1,5 +1,5 @@
 use crate::prelude::*;
-use notan::draw::{CreateDraw, DrawImages, DrawShapes};
+use notan::draw::{CreateDraw, Draw, DrawImages, DrawShapes};
 
 
 
@@ -34,15 +34,17 @@ pub fn render(gfx: &mut Graphics, program_data: &mut ProgramData) -> Result<()> 
 		
 		
 		
-		ProgramMode::MainMenu (main_menu_data) => {
+		ProgramMode::MainMenu => {
 			
 			draw.clear(Color::from_rgba(0.5, 0.42, 0.42, 1.0));
+			
+			render_gui(&program_data.main_menu_data.gui, program_data, &mut draw, screen_size)?;
 			
 		}
 		
 		
 		
-		ProgramMode::Playing (playing_data) => {
+		ProgramMode::Playing => {
 			
 			// background
 			draw.clear(Color::BLACK);
@@ -57,7 +59,7 @@ pub fn render(gfx: &mut Graphics, program_data: &mut ProgramData) -> Result<()> 
 			
 			// player
 			let (on_screen_pos, on_screen_size) = arena_placement_to_screen_placement(
-				playing_data.player_pos - program_settings::PLAYER_SIZE * 0.5,
+				program_data.playing_data.player_pos - program_settings::PLAYER_SIZE * 0.5,
 				program_settings::PLAYER_SIZE,
 				screen_size
 			);
@@ -65,6 +67,8 @@ pub fn render(gfx: &mut Graphics, program_data: &mut ProgramData) -> Result<()> 
 				.image(&program_data.textures.player)
 				.position(on_screen_pos.0, on_screen_pos.1)
 				.size(on_screen_size.0, on_screen_size.1);
+			
+			render_gui(&program_data.playing_data.gui, program_data, &mut draw, screen_size)?;
 			
 		}
 		
@@ -74,26 +78,29 @@ pub fn render(gfx: &mut Graphics, program_data: &mut ProgramData) -> Result<()> 
 	
 	
 	
-	// ======== GUI ========
+	gfx.render(&draw);
+	
+	Ok(())
+}
+
+
+
+pub fn render_gui(gui: &GuiElement<CustomGuiData>, program_data: &ProgramData, draw: &mut Draw, screen_size: UVec2) -> Result<()> {
 	
 	// render
 	let mut render_data = GuiRenderingData {
-		draw: &mut draw,
-		textures,
+		draw,
+		textures: &program_data.textures,
 		rendering_font: program_data.rendering_font,
 		positioning_font: &program_data.positioning_font,
 	};
-	let render_gui_result = gui::render::run_render_fns::<CustomGuiData, GuiRenderingData, GuiRenderFn>(&program_data.gui, screen_size.to_tuple(), &mut render_data);
+	let render_gui_result = gui::render::run_render_fns::<CustomGuiData, GuiRenderingData, GuiRenderFn>(gui, screen_size.to_tuple(), &mut render_data);
 	if let StdResult::Err(render_gui_errors) = render_gui_result {
 		println!("Errors ocurred while rendering:");
 		for error in render_gui_errors {
 			println!("{error}");
 		}
 	}
-	
-	
-	
-	gfx.render(&draw);
 	
 	Ok(())
 }

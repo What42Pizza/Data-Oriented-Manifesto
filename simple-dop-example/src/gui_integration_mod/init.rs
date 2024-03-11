@@ -8,13 +8,21 @@ pub struct GuiLoadingData<'a> {
 
 
 
-pub fn init_gui(textures: &Textures) -> Result<GuiElement<CustomGuiData>> {
+pub fn init_all_guis(program_data: &mut ProgramData) -> Result<()> {
+	program_data.main_menu_data.gui = init_single_gui("assets/gui/main menu", update_for_main_menu::set_click_fns, &program_data.textures)?;
+	program_data.playing_data.gui = init_single_gui("assets/gui/playing", update_for_playing::set_click_fns, &program_data.textures)?;
+	Ok(())
+}
+
+
+
+pub fn init_single_gui(path: &'static str, click_fn_init: fn(&mut GuiElement<CustomGuiData>) -> Result<()>, textures: &Textures) -> Result<GuiElement<CustomGuiData>> {
 	
 	// load gui
 	let mut gui_loading_data = GuiLoadingData {
 		textures,
 	};
-	let gui_dir = get_program_file_path("assets/gui");
+	let gui_dir = get_program_file_path(path);
 	let mut errors = vec!();
 	let gui = gui::load::load_gui::<CustomGuiData, GuiLoadingFnsImpl, GuiLoadingData>(gui_dir, &mut CustomGuiData::default, &mut gui_loading_data, &mut errors);
 	let mut gui = match gui {
@@ -29,7 +37,7 @@ pub fn init_gui(textures: &Textures) -> Result<GuiElement<CustomGuiData>> {
 	}
 	
 	// add click functions
-	gui_click_fns::add_click_fns(&mut gui)?;
+	click_fn_init(&mut gui)?;
 	
 	Ok(gui)
 }

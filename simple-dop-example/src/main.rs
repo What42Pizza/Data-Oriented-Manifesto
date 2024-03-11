@@ -52,7 +52,7 @@ pub mod prelude {
 		gui_mod as gui,
 		custom_impls::*,
 	};
-	pub use crate::gui_integration_mod::prelude::*;
+	pub use crate::gui_integration_mod::{self, prelude::*};
 	pub use std::{path::*, time::{Duration, Instant}};
 	pub use std::{error::Error as StdError, result::Result as StdResult};
 	
@@ -117,38 +117,27 @@ pub fn init(gfx: &mut Graphics) -> Result<ProgramData> {
 	let rendering_font = gfx.create_font(FONT_BYTES).unwrap();
 	let positioning_font = PositioningFont::try_from_vec(FONT_BYTES.to_vec()).unwrap();
 	
-	// load gui
-	let gui = init_gui(&textures)?;
-	
-	//fn print_gui(element: &GuiElement<CustomGuiData>) {
-	//	println!("{}", element.name);
-	//	for child in &element.children_by_layer {
-	//		print_gui(child);
-	//	}
-	//}
-	//print_gui(&gui);
-	
-	//let order_tree = gui_mod::render::get_element_ordering(&gui, (1280, 720));
-	//for (i, node) in order_tree.iter().enumerate() {
-	//	println!("{i}: {node:?}");
-	//}
-	//panic!();
 	
 	
-	
-	let output = ProgramData {
+	let mut output = ProgramData {
 		
 		exit: false,
 		
-		gui,
 		textures,
 		rendering_font,
 		positioning_font,
 		last_screen_size: gfx.size().to_uvec2(),
 		
-		mode: ProgramMode::MainMenu (MainMenuData::new()),
+		mode: ProgramMode::MainMenu,
+		main_menu_data: MainMenuData::empty(),
+		playing_data: PlayingData::empty(),
 		
 	};
+	
+	output.main_menu_data.reset();
+	
+	// load gui
+	init_all_guis(&mut output)?;
 	
 	Ok(output)
 }

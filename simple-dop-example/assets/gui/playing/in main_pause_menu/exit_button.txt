@@ -1,0 +1,14 @@
+x: 0.1
+y: 0.2
+width: 0.8
+height: 0.1
+
+has background: true
+background color: f000
+default background alpha: 8
+
+has text: true
+text: Exit
+text size: 0.9
+text color: 0000
+default text alpha: f
