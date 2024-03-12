@@ -8,7 +8,6 @@ But first, I need to set some definitions. You can skip this if you want, but pl
 - Procedural programming: Creating code one struct / function at a time
 - Mixed codebase: Any codebase that uses multiple paradigms, like OOP + procedural (which is almost every codebase)
 - Control flow: The sequence of actions that is ultimately performed by code
-- Flexibility: The ability to change any part of software with little effort
 
 
 

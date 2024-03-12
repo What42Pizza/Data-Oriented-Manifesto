@@ -45,6 +45,7 @@ pub fn render(gfx: &mut Graphics, program_data: &mut ProgramData) -> Result<()> 
 		
 		
 		ProgramMode::Playing => {
+			let playing_data = &program_data.playing_data;
 			
 			// background
 			draw.clear(Color::BLACK);
@@ -59,14 +60,27 @@ pub fn render(gfx: &mut Graphics, program_data: &mut ProgramData) -> Result<()> 
 			
 			// player
 			let (on_screen_pos, on_screen_size) = arena_placement_to_screen_placement(
-				program_data.playing_data.player_pos - program_settings::PLAYER_SIZE * 0.5,
-				program_settings::PLAYER_SIZE,
+				playing_data.player_pos - program_settings::PLAYER_SIZE * 0.5,
+				Vec2::new(program_settings::PLAYER_SIZE, program_settings::PLAYER_SIZE),
 				screen_size
 			);
 			draw
 				.image(&program_data.textures.player)
 				.position(on_screen_pos.0, on_screen_pos.1)
 				.size(on_screen_size.0, on_screen_size.1);
+			
+			// enemies
+			for enemy in &playing_data.enemies {
+				let (on_screen_pos, on_screen_size) = arena_placement_to_screen_placement(
+					enemy.pos - program_settings::ENEMY_SIZE * 0.5,
+					Vec2::new(program_settings::ENEMY_SIZE, program_settings::ENEMY_SIZE),
+					screen_size
+				);
+				draw
+					.image(&program_data.textures.enemy)
+					.position(on_screen_pos.0, on_screen_pos.1)
+					.size(on_screen_size.0, on_screen_size.1);
+			}
 			
 			render_gui(&program_data.playing_data.gui, program_data, &mut draw, screen_size)?;
 			

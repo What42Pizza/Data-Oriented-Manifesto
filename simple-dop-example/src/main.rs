@@ -15,13 +15,19 @@ pub mod program_settings {
 	pub const MAIN_MENU_WAIT_DURATION: Duration = Duration::from_secs(2);
 	pub const PLAYING_PAUSE_MENU_FADE_DURATION: Duration = Duration::from_millis(200);
 	
-	pub const PLAYER_SIZE: Vec2 = Vec2::new(0.05, 0.05);
 	pub const PLAYER_ACCELERATION: f32 = 1.7;
 	pub const PLAYER_DRAG_COEF: f32 = 0.01;
-	pub const PLAYER_BULLET_SPEED: f32 = 0.01;
+	pub const ENEMY_SPEED: f32 = 0.2;
 	
-	pub const PLAYER_HIT_RADIUS: f32 = 0.05;
-	pub const ENEMY_HIT_RADIUS: f32 = 0.05;
+	pub const PLAYER_SIZE: f32 = 0.05;
+	pub const ENEMY_SIZE: f32 = 0.05;
+	
+	pub const PLAYER_BULLET_SPEED: f32 = 0.01;
+	pub const ENEMY_BULLET_SPEED: f32 = 0.01;
+	
+	pub const ENEMY_SPAWN_WAIT_SECS: f32 = 1.;
+	pub const ENEMY_SPAWN_WAIT_COEF_PERCENT: u32 = 98;
+	pub const ENEMY_SHOOT_WAIT_SECS: f32 = 1.;
 	
 }
 
@@ -78,7 +84,7 @@ fn main() -> Result<(), String> {
 	notan::init_with(init_wrapper)
 		.add_config(win_config)
 		.add_config(DrawConfig)
-		.update(update_mod::update::update_wrapper)
+		.update(update_mod::update_wrapper)
 		.draw(render::render_wrapper)
 		.build()
 }
